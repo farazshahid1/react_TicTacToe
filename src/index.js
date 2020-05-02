@@ -21,16 +21,32 @@ class Board extends Component {
 
   renderSquare(i) {
       return (
-        <Square 
+        <Square
+        key={i} 
           value={this.props.squares[i]} 
           onClick={() => this.props.onClick(i) }      />
         );
   }
 
   render () {
+
+    let square=[]
+    let count=0;
+      for(let i=0; i<3; i++){
+        
+        let rows=[]
+        for(let k=0; k<3 ; k++){
+          
+            rows.push(this.renderSquare(count))
+            count ++;
+        }
+        square.push(<div key={i}className="board-row">{rows}</div>)
+      }
+
     return (
       <div>
-          <div className="board-row">
+           {square}
+          {/* <div className="board-row">
             {this.renderSquare(0)}
             {this.renderSquare(1)}
             {this.renderSquare(2)}
@@ -44,7 +60,7 @@ class Board extends Component {
             {this.renderSquare(6)}
             {this.renderSquare(7)}
             {this.renderSquare(8)}
-          </div>
+          </div> */}
       </div>
     )
   }
@@ -183,38 +199,6 @@ function calculateWinner(squares) {
   return null;
 }
 
-function calculatePosition(i){
-    const location = [];
-    // column
-    if(i === 0 || i === 3 || i === 6)
-    {
-      location[1] = 1;
-    }
-    else if(i === 1 || i === 4 || i === 7)
-    {
-      location[1] = 2;
-    }
-    else if(i === 2 || i === 5 || i === 8)
-    {
-      location[1] = 3;
-    }
-
-    //row
-    if(i === 0 || i === 1 || i === 2)
-    {
-      location[0] = 1;
-    }
-    else if(i === 3 || i === 4 || i === 5)
-    {
-      location[0] = 2;
-    }
-    else if(i === 6 || i === 7 || i === 8)
-    {
-      location[0] = 3;
-    }
-
-    return location;
-}
 
 ReactDOM.render(
   <Game />,
