@@ -50,5 +50,6 @@ ol, ul {
 }
 
 .Button {
+  float: left;
   font-weight: bold;
 }

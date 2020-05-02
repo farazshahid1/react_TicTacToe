@@ -111,7 +111,8 @@ class Game extends Component {
     const winner = calculateWinner(current.squares)
     console.log("Winner in render: " + winner);
 
-    const buttonStyle = this.state.style;
+   
+    const stepNumber = this.state.stepNumber
     const moves = history.map((step, move) => {
       console.log("move # is render : " + move)
       const currentSelected = step.currentSelectSquare;
@@ -121,7 +122,7 @@ class Game extends Component {
         'Go to move #' + move + ' (' + col + ',' + row + ')':
         'Go to game Start';
         let button
-        if(buttonStyle && this.state.stepNumber === move){
+        if(stepNumber === move){
            button= "Button"
         }
         else{
