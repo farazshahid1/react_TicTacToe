@@ -55,7 +55,8 @@ class Game extends Component {
       super(props);
       this.state = {
         history: [{
-          squares: Array(9).fill(null)
+          squares: Array(9).fill(null),
+          locations: Array(2).fill(null)
         }],
         stepNumber: 0,
         xIsNext: true
@@ -63,23 +64,35 @@ class Game extends Component {
     }
 
     handleClick(i) {
+      
+      console.log("Handle Click box is: " + i)
       const history = this.state.history.slice(0, this.state.stepNumber + 1)
+      console.log("stepNumber in start HandleClick: " + this.state.stepNumber)
+      console.log(JSON.stringify(history))
       const current = history[history.length - 1];
       const squares = current.squares.slice();
       if(calculateWinner(squares) || squares[i] ){
         return
       }
+
+     // let location = current.locations.slice();
+     let location ;
+    location = calculatePosition(i)
+    console.log(location)
       squares[i]= this.state.xIsNext ? 'X': 'O';
       this.setState({
         history: history.concat([{
-          squares:squares
+          squares:squares,
+          locations: location
         }]),
         stepNumber: history.length,
         xIsNext: !this.state.xIsNext
       });
+    //  console.log("stepNumber in  exit HandleClick: " + history.length)
     }
 
     jumpTo(step) {
+       console.log("jump step: " + step)
       this.setState({
         stepNumber: step,
         xIsNext: (step % 2) === 0
@@ -88,13 +101,20 @@ class Game extends Component {
 
   render() {
 
-    const history = this.state.history;
+    console.log("Render: ");
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    console.log("HistoryLength in render: " + history.length);
+    console.log("Step Number in render: " + this.state.stepNumber);
     const current = history[this.state.stepNumber];
+    
     const winner = calculateWinner(current.squares)
+    console.log("Winner in render: " + winner);
 
     const moves = history.map((step, move) => {
+      console.log("move # is render : " + move)
+      
       const desc = move ? 
-        'Go to move #' + move :
+        'Go to move #' + move + ' (' + step.locations[1] + ',' + step.locations[0] + ')':
         'Go to game Start';
 
         return (
@@ -108,7 +128,9 @@ class Game extends Component {
     if(winner){
       status = 'Winner: ' + winner;
     } else {
-      status = 'Next Player: ' + this.state.xIsNext ? 'X' : 'O';
+      console.log("status")
+      status = "Next Player: " + (this.state.xIsNext ? 'X' : 'O');
+      console.log(status)
     }
 
     return (
@@ -148,6 +170,39 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function calculatePosition(i){
+    const location = [];
+    // column
+    if(i === 0 || i === 3 || i === 6)
+    {
+      location[1] = 1;
+    }
+    else if(i === 1 || i === 4 || i === 7)
+    {
+      location[1] = 2;
+    }
+    else if(i === 2 || i === 5 || i === 8)
+    {
+      location[1] = 3;
+    }
+
+    //row
+    if(i === 0 || i === 1 || i === 2)
+    {
+      location[0] = 1;
+    }
+    else if(i === 3 || i === 4 || i === 5)
+    {
+      location[0] = 2;
+    }
+    else if(i === 6 || i === 7 || i === 8)
+    {
+      location[0] = 3;
+    }
+
+    return location;
 }
 
 ReactDOM.render(
