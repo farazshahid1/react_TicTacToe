@@ -56,10 +56,11 @@ class Game extends Component {
       this.state = {
         history: [{
           squares: Array(9).fill(null),
-          locations: Array(2).fill(null)
+          currentSelectSquare: null
         }],
         stepNumber: 0,
-        xIsNext: true
+        xIsNext: true,
+        style: false
       };
     }
 
@@ -76,14 +77,13 @@ class Game extends Component {
       }
 
      // let location = current.locations.slice();
-     let location ;
-    location = calculatePosition(i)
-    console.log(location)
+    
+   
       squares[i]= this.state.xIsNext ? 'X': 'O';
       this.setState({
         history: history.concat([{
           squares:squares,
-          locations: location
+          currentSelectSquare: i
         }]),
         stepNumber: history.length,
         xIsNext: !this.state.xIsNext
@@ -95,8 +95,9 @@ class Game extends Component {
        console.log("jump step: " + step)
       this.setState({
         stepNumber: step,
-        xIsNext: (step % 2) === 0
-      });
+        xIsNext: (step % 2) === 0,
+        style: true
+      }); 
     }
 
   render() {
@@ -106,20 +107,29 @@ class Game extends Component {
     console.log("HistoryLength in render: " + history.length);
     console.log("Step Number in render: " + this.state.stepNumber);
     const current = history[this.state.stepNumber];
-    
+    //const button= "Button"
     const winner = calculateWinner(current.squares)
     console.log("Winner in render: " + winner);
 
+    const buttonStyle = this.state.style;
     const moves = history.map((step, move) => {
       console.log("move # is render : " + move)
-      
+      const currentSelected = step.currentSelectSquare;
+      const row = 1 + Math.floor(currentSelected / 3);
+      const col = 1+ (currentSelected % 3);
       const desc = move ? 
-        'Go to move #' + move + ' (' + step.locations[1] + ',' + step.locations[0] + ')':
+        'Go to move #' + move + ' (' + col + ',' + row + ')':
         'Go to game Start';
-
+        let button
+        if(buttonStyle && this.state.stepNumber === move){
+           button= "Button"
+        }
+        else{
+          button =""
+        }
         return (
           <li key={move}>
-            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+            <button className={button} onClick={() => this.jumpTo(move)}>{desc}</button>
           </li>
         );
     });
