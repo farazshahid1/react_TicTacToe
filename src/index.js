@@ -46,21 +46,6 @@ class Board extends Component {
     return (
       <div>
            {square}
-          {/* <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-          </div> */}
       </div>
     )
   }
@@ -76,7 +61,7 @@ class Game extends Component {
         }],
         stepNumber: 0,
         xIsNext: true,
-        style: false
+        ascDesc: true
       };
     }
 
@@ -112,8 +97,15 @@ class Game extends Component {
       this.setState({
         stepNumber: step,
         xIsNext: (step % 2) === 0,
-        style: true
+      
       }); 
+    }
+
+    toggelHandler() {
+      console.log("Toggel Handler Clicked");
+      this.setState({
+        ascDesc: !this.state.ascDesc
+      });
     }
 
   render() {
@@ -126,30 +118,60 @@ class Game extends Component {
     //const button= "Button"
     const winner = calculateWinner(current.squares)
     console.log("Winner in render: " + winner);
-
-   
+    console.log("history.length " + history.length)
     const stepNumber = this.state.stepNumber
-    const moves = history.map((step, move) => {
-      console.log("move # is render : " + move)
-      const currentSelected = step.currentSelectSquare;
-      const row = 1 + Math.floor(currentSelected / 3);
-      const col = 1+ (currentSelected % 3);
-      const desc = move ? 
-        'Go to move #' + move + ' (' + col + ',' + row + ')':
-        'Go to game Start';
-        let button
-        if(stepNumber === move){
-           button= "Button"
-        }
-        else{
-          button =""
-        }
-        return (
-          <li key={move}>
-            <button className={button} onClick={() => this.jumpTo(move)}>{desc}</button>
-          </li>
-        );
-    });
+    let moves=null;
+
+    if(this.state.ascDesc){
+       moves = history.map((step, move) => {
+        console.log("move # is render : " + move)
+        const currentSelected = step.currentSelectSquare;
+        const row = 1 + Math.floor(currentSelected / 3);
+        const col = 1+ (currentSelected % 3);
+        const desc = move ? 
+          'Go to move #' + move + ' (' + col + ',' + row + ')':
+          'Go to game Start';
+          let button
+          if(stepNumber === move){
+             button= "Button"
+          }
+          else{
+            button =""
+          }
+          return (
+            <li key={move}>
+              <button className={button} onClick={() => this.jumpTo(move)}>{desc}</button>
+            </li>
+          );
+      });
+    }else {
+      moves=[];
+
+      for(let i=history.length-1; i>=0; i--){
+        console.log("current Selected " + history[i].currentSelectSquare)
+        const currentSelected = history[i].currentSelectSquare;
+        const row = 1 + Math.floor(currentSelected / 3);
+        const col = 1+ (currentSelected % 3);
+        const desc = i ? 
+          'Go to move #' + i + ' (' + col + ',' + row + ')':
+          'Go to game Start';
+          let button
+          if(stepNumber === i){
+             button= "Button"
+          }
+          else{
+            button =""
+          }
+         moves.push(  <li key={i}>
+          <button className={button} onClick={() => this.jumpTo(i)}>{desc}</button>
+        </li>);
+      }
+    }
+    
+
+    
+
+     
 
     let status;
     if(winner){
@@ -169,6 +191,7 @@ class Game extends Component {
        </div>
         <div className="game-info">
           <div>{status}</div>
+          <div><button onClick={() => this.toggelHandler()}>Toggel</button></div>
           <ol>{moves}</ol>
         </div>
       </div>
